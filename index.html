@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Ava Sudoku</title>
+  <meta name="description" content="Ava ve arkadaşlarıyla sıcacık bir Sudoku macerası">
+  <meta name="theme-color" content="#1f1712">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ava Sudoku">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preload" href="assets/ui/font.otf" as="font" type="font/otf" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app" id="app">
+
+    <!-- HOME -->
+    <section id="home" class="screen">
+      <div class="scene" style="background-image:url(assets/bg/office.webp)"></div>
+      <header class="topbar">
+        <h1 class="logo">Ava <span>Sudoku</span></h1>
+        <div class="chips">
+          <div class="chip"><img src="assets/items/choco.webp" alt=""><b id="totalScore">0</b></div>
+          <div class="chip"><span class="star">★</span><b id="totalStars">0</b></div>
+        </div>
+        <button class="round-btn fs-btn" aria-label="Tam ekran">
+          <svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+        </button>
+      </header>
+
+      <div class="hero">
+        <div class="bubble" id="avaBubble">Hoş geldin!</div>
+        <img class="ava-sprite" id="avaSprite" src="assets/ava/smile.webp" alt="Ava">
+      </div>
+
+      <div class="home-body">
+        <button class="btn gold wide" id="resumeBtn" hidden></button>
+        <h2 class="section-title">Zorluklar</h2>
+        <div class="chapters" id="chapterList"></div>
+      </div>
+    </section>
+
+    <!-- CHAPTER -->
+    <section id="chapter" class="screen" hidden>
+      <div class="chapter-head" id="chapterHead">
+        <button class="img-btn back" data-back><img src="assets/ui/arrow_left.webp" alt="Geri"></button>
+        <div class="chapter-title">
+          <small id="chPlace"></small>
+          <h2 id="chName"></h2>
+        </div>
+        <div class="host-line">
+          <img class="avatar" id="chHost" alt="">
+          <div class="bubble small" id="chBubble"></div>
+        </div>
+      </div>
+      <div class="chapter-body">
+        <p class="muted" id="chInfo"></p>
+        <div class="ch-stats" id="chStats"></div>
+        <button class="btn gold wide big" id="newGameBtn">Yeni oyun</button>
+        <button class="btn wide" id="chResumeBtn" hidden>Devam et</button>
+        <div class="reward-box" id="chReward"></div>
+      </div>
+    </section>
+
+    <!-- GAME -->
+    <section id="game" class="screen" hidden>
+      <div class="scene dim" id="gameScene"></div>
+      <header class="game-top">
+        <button class="img-btn" data-back><img src="assets/ui/arrow_left.webp" alt="Geri"></button>
+        <div class="game-title">
+          <small id="gPlace"></small>
+          <b id="gLevel"></b>
+        </div>
+        <button class="round-btn" id="pauseBtn" aria-label="Duraklat">
+          <svg viewBox="0 0 24 24"><path d="M9 6v12M15 6v12"/></svg>
+        </button>
+      </header>
+
+      <div class="stats">
+        <div class="stat"><small>Puan</small><b id="gScore">0</b></div>
+        <div class="stat"><small>Hata</small><b id="gMistakes">0/3</b></div>
+        <div class="stat"><small>Süre</small><b id="gTime">00:00</b></div>
+      </div>
+
+      <div class="host-strip">
+        <img class="avatar" id="gHost" alt="">
+        <div class="bubble small left" id="gBubble"></div>
+      </div>
+
+      <div class="board-wrap">
+        <div class="board" id="board"></div>
+        <div class="pause-overlay" id="pauseOverlay" hidden>
+          <img src="assets/items/choco.webp" alt="">
+          <p>Kahve molası</p>
+          <button class="btn gold" id="resumePlayBtn">Devam et</button>
+        </div>
+        <div class="loading" id="loading" hidden><span></span>Bulmaca hazırlanıyor…</div>
+      </div>
+
+      <div class="tools">
+        <button class="tool" id="undoBtn"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg><span>Geri al</span></button>
+        <button class="tool" id="eraseBtn"><svg viewBox="0 0 24 24"><path d="M20 20H8l-5-5 10-10 8 8-7 7"/></svg><span>Sil</span></button>
+        <button class="tool" id="notesBtn"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg><span>Not</span><i class="badge" id="notesState">kapalı</i></button>
+        <button class="tool" id="hintBtn"><img src="assets/items/potion_1.webp" alt=""><span>İpucu</span><i class="badge" id="hintsLeft">3</i></button>
+      </div>
+
+      <div class="numpad" id="numpad"></div>
+    </section>
+
+    <!-- CHARACTERS -->
+    <section id="cast" class="screen" hidden>
+      <div class="scene" style="background-image:url(assets/bg/village.webp)"></div>
+      <header class="topbar"><h1 class="logo">Karakterler</h1></header>
+      <p class="muted pad">Yıldız topladıkça Ava'nın arkadaşları seni desteklemeye gelir.</p>
+      <div class="cast-grid" id="castGrid"></div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="settings" class="screen" hidden>
+      <div class="scene" style="background-image:url(assets/bg/village.webp)"></div>
+      <header class="topbar"><h1 class="logo">Ayarlar</h1></header>
+      <div class="settings-wrap">
+        <div class="panel">
+          <label class="row"><span>Ses efektleri</span><input type="checkbox" id="optSfx"><i class="switch"></i></label>
+          <label class="row"><span>Müzik</span><input type="checkbox" id="optMusic"><i class="switch"></i></label>
+          <label class="row"><span>Titreşim</span><input type="checkbox" id="optVibe"><i class="switch"></i></label>
+          <label class="row"><span>Aynı rakamları vurgula</span><input type="checkbox" id="optSame"><i class="switch"></i></label>
+          <div class="row fs-row"><span>Tam ekran</span><button class="btn small fs-btn">Aç / Kapat</button></div>
+        </div>
+        <div class="panel">
+          <h3>Nasıl puan alırım?</h3>
+          <ul class="rules">
+            <li>Her oyun rastgele yeni bir bulmaca</li>
+            <li>Doğru hamle <b>+10</b> × zorluk çarpanı</li>
+            <li>Hata <b>−25</b> × çarpan · 3 hatada oyun biter</li>
+            <li>İpucu <b>−50</b> × çarpan · en fazla 3</li>
+            <li>Bitirince taban puan + zaman bonusu + kusursuz bonus</li>
+            <li>Bir zorlukta 3 oyun kazanınca sonraki açılır</li>
+          </ul>
+        </div>
+        <button class="btn danger wide" id="resetBtn">İlerlemeyi sıfırla</button>
+      </div>
+    </section>
+
+    <nav class="tabbar" id="tabbar">
+      <button data-tab="home" class="active"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Oyna</span></button>
+      <button data-tab="cast"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M17 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/></svg><span>Karakterler</span></button>
+      <button data-tab="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-2.9-1.2l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 14H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 10 3V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.9 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 21 10h.1a2 2 0 1 1 0 4z"/></svg><span>Ayarlar</span></button>
+    </nav>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-bg" id="modal" hidden>
+    <div class="modal">
+      <img class="modal-ava" id="mAva" alt="">
+      <div class="modal-box">
+        <h2 id="mTitle"></h2>
+        <p class="modal-line" id="mLine"></p>
+        <div class="stars" id="mStars"></div>
+        <div class="breakdown" id="mBreakdown"></div>
+        <div class="cheer" id="mCheer" hidden><img class="avatar" alt=""><p></p></div>
+        <div class="modal-actions" id="mActions"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fx" id="fx"></div>
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
