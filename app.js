@@ -1132,13 +1132,20 @@ document.addEventListener('contextmenu', (e) => e.preventDefault());
 
 /* ---------- Boot ---------- */
 
-// iOS standalone mis-reports 100vh/100dvh, so size layout from the real fixed-position app height
+// iOS home-screen apps report a viewport one status bar shorter than the screen they draw on,
+// so there the full screen height is used instead of the viewport
 function syncHeight() {
-  document.documentElement.style.setProperty('--app-h', `${$('app').clientHeight}px`);
+  let h = window.innerHeight;
+  if (navigator.standalone) {
+    const portrait = matchMedia('(orientation: portrait)').matches;
+    h = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
+  }
+  document.documentElement.style.setProperty('--app-h', `${h}px`);
   window.scrollTo(0, 0);
 }
 syncHeight();
 window.addEventListener('resize', syncHeight);
+if (window.visualViewport) visualViewport.addEventListener('resize', syncHeight);
 window.addEventListener('orientationchange', () => setTimeout(syncHeight, 300));
 
 history.replaceState(null, '');

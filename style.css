@@ -77,7 +77,10 @@ img { -webkit-user-drag: none; }
 
 .app {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--app-h);
   max-width: 480px;
   margin: 0 auto;
   overflow: hidden;
@@ -110,7 +113,6 @@ img { -webkit-user-drag: none; }
   z-index: 0 !important;
   height: var(--app-h);
   margin-bottom: calc(var(--app-h) * -1);
-  margin-top: calc(var(--safe-t) * -1);
   background-size: cover;
   background-position: center;
   pointer-events: none;

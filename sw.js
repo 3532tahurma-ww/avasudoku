@@ -1,4 +1,4 @@
-const VERSION = 'ava-sudoku-v5';
+const VERSION = 'ava-sudoku-v6';
 const SHELL = [
   './', 'index.html', 'style.css', 'app.js', 'manifest.json',
   'icon-192.png', 'icon-512.png', 'apple-touch-icon.png',
@@ -46,7 +46,23 @@ self.addEventListener('fetch', (e) => {
   // Music is streamed with range requests; let the browser handle it
   if (req.headers.has('range')) return;
 
-  // App shell: serve from cache, refresh it in the background so new deploys show up on the next launch
+  // Page and code: network first so a new deploy shows up immediately, cache when offline
+  if (req.mode === 'navigate' || /\.(js|css|json)$/.test(url.pathname)) {
+    e.respondWith(
+      fetch(req)
+        .then((res) => {
+          if (res.ok) {
+            const copy = res.clone();
+            caches.open(VERSION).then((c) => c.put(req, copy));
+          }
+          return res;
+        })
+        .catch(() => caches.match(req, { ignoreSearch: true }).then((r) => r || caches.match('index.html')))
+    );
+    return;
+  }
+
+  // Assets: serve from cache, refresh it in the background
   e.respondWith(
     caches.match(req, { ignoreSearch: true }).then((cached) => {
       const network = fetch(req).then((res) => {
