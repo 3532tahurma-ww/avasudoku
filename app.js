@@ -1132,6 +1132,15 @@ document.addEventListener('contextmenu', (e) => e.preventDefault());
 
 /* ---------- Boot ---------- */
 
+// iOS standalone mis-reports 100vh/100dvh, so size layout from the real fixed-position app height
+function syncHeight() {
+  document.documentElement.style.setProperty('--app-h', `${$('app').clientHeight}px`);
+  window.scrollTo(0, 0);
+}
+syncHeight();
+window.addEventListener('resize', syncHeight);
+window.addEventListener('orientationchange', () => setTimeout(syncHeight, 300));
+
 history.replaceState(null, '');
 show('home');
 

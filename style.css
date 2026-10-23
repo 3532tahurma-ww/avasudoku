@@ -30,6 +30,7 @@
 
   --display: "AvaFont", "Nunito", system-ui, sans-serif;
   --tabbar-h: 64px;
+  --app-h: 100vh;
   --safe-b: env(safe-area-inset-bottom, 0px);
   --safe-t: env(safe-area-inset-top, 0px);
   --shadow: 0 10px 24px -10px rgba(0, 0, 0, .7);
@@ -42,7 +43,11 @@ html, body {
   height: 100%;
   overflow: hidden;
   overscroll-behavior: none;
-  background: #120d0a;
+  background: var(--bg);
+}
+
+@media (min-width: 520px) {
+  html, body { background: #120d0a; }
 }
 
 body {
@@ -71,9 +76,8 @@ img { -webkit-user-drag: none; }
 .no-fs .fs-btn, .no-fs .fs-row { display: none !important; }
 
 .app {
-  position: relative;
-  height: 100vh;
-  height: 100dvh;
+  position: fixed;
+  inset: 0;
   max-width: 480px;
   margin: 0 auto;
   overflow: hidden;
@@ -104,8 +108,8 @@ img { -webkit-user-drag: none; }
   position: sticky !important;
   top: 0;
   z-index: 0 !important;
-  height: 100dvh;
-  margin-bottom: -100dvh;
+  height: var(--app-h);
+  margin-bottom: calc(var(--app-h) * -1);
   margin-top: calc(var(--safe-t) * -1);
   background-size: cover;
   background-position: center;
@@ -420,7 +424,7 @@ img { -webkit-user-drag: none; }
 /* ---------- Game ---------- */
 
 #game {
-  --bw: min(calc(100vw - 20px), calc(100dvh - var(--safe-t) - var(--safe-b) - 330px), 460px);
+  --bw: min(calc(100vw - 20px), calc(var(--app-h) - var(--safe-t) - var(--safe-b) - 330px), 460px);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -941,7 +945,7 @@ img { -webkit-user-drag: none; }
 
   /* game: board on the left, controls on the right */
   #game {
-    --bw: min(calc(100dvh - 120px), calc(100vw - 480px), 820px);
+    --bw: min(calc(var(--app-h) - 120px), calc(100vw - 480px), 820px);
     display: grid;
     grid-template-columns: var(--bw) 380px;
     grid-template-rows: auto auto auto auto 1fr;
